@@ -1,4 +1,4 @@
-package lumidl.connections;
+package lumidl.connection;
 
 /**
  * Custom wrapper for situations arising during logging in.

@@ -1,4 +1,4 @@
-package lumidl.connections;
+package lumidl.connection;
 
 /**
  * Custom exception to wrap authentication errors.

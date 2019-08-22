@@ -1,4 +1,4 @@
-package lumidl.connections;
+package lumidl.connection;
 
 import java.io.IOException;
 import java.util.Base64;
@@ -19,38 +19,33 @@ import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+// Yes, star imports are a bad pattern, TODO, etc.
+import static lumidl.connection.Constants.*;
+
 /**
  * Contains and encapsulates all login-related methods and data.
  * @author dongyu
  */
 public class Login {	
-	// LumiNUS URLs
-	private static final String API_BASE_URL = "https://luminus.azure-api.net";
-	private static final String ADFS_TOKEN_PATH = "/login/adfstoken";
-	
-	// Params and URLs for accessing ADFS token portal
-	private static final String ADFS_OAUTH2_URL = "https://vafs.nus.edu.sg/adfs/oauth2/authorize";
-	private static final String ADFS_GRANT_TYPE = "authorization_code";
-	private static final String ADFS_CLIENT_ID = "E10493A3B1024F14BDC7D0D8B9F649E9-234390";
-	private static final String ADFS_SCOPE = "";
-	private static final String ADFS_RESOURCE = "sg_edu_nus_oauth";
-	private static final String ADFS_RESPONSE_TYPE = "code";
-	private static final String ADFS_REDIRECT_URL = "https://luminus.nus.edu.sg/auth/callback";
-	
-	// The subscription key to use, and the appropriate header name.
-	private static final String OCP_APIM_SUBSCRIPTION_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key";
-	private static final String OCP_APIM_SUBSCRIPTION_KEY = "6963c200ca9440de8fa1eede730d8f7e";
-	
 	private Logger logger;
 	private HttpTransport httpTransport;
 	private HttpRequestFactory httpRequestFactory;
 	private String accessToken = null;
+	private String username;
+	private String password;
 	
-	public Login() {
+	/**
+	 * C'tor for Login object.
+	 * @param username The username to be used during actual login attempt.
+	 * @param password The password to be used during actual login attempt.
+	 */
+	public Login(String username, String password) {
 		// We use Apache's HTTP transport because it preserves cookies across requests.
 		httpTransport = new ApacheHttpTransport();
 		httpRequestFactory = httpTransport.createRequestFactory();
 		logger = Logger.getLogger(this.getClass().getName());
+		this.username = username;
+		this.password = password;
 	}
 	
 	/**
@@ -74,13 +69,14 @@ public class Login {
 	}
 	
 	/**
-	 * Attempts to log in to LumiNUS using a given user-name and password.
+	 * Attempts to log into LumiNUS.
 	 * Will attempt to cache access token upon successful login.
 	 * @param username The NUSNET user-name to use.
 	 * @param password The NUSNET password to use.
 	 * @throws IOException
 	 */
-	public void login(String username, String password) throws IOException {
+	@SuppressWarnings("unchecked")
+	public void execute() throws IOException {
 		/*
 		 * The flow for login is as follows (?):
 		 * 1. Log in with username and password to OAuth2 site.

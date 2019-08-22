@@ -1,24 +1,26 @@
 package lumidl;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Properties;
+import java.util.logging.Logger;
 
-import lumidl.connections.Api;
-import lumidl.connections.Login;
+import lumidl.connection.Api;
+import lumidl.connection.Login;
+
+import static lumidl.connection.Constants.*;
 
 public class Main {
-	private static final String PROPERTIES_PATH = "./bin/main/config.properties";
-	
 	public static void main(String[] args) {
-		Properties prop = new Properties();
+		Logger logger = Logger.getLogger("lumidl.Main");
+		
 		try {
-			prop.load(new FileInputStream(PROPERTIES_PATH));
 			// TODO: Add user input for password, saving over username/password.
 			
-			Login log = new Login();
-			log.login(prop.getProperty("username"), prop.getProperty("password"));
+			Login log = new Login(USERNAME, PASSWORD);
+			log.execute();
 			Api api = log.generateApiObject();
+			
+			logger.info("Subscription Key = " + log.getSubscriptionKey() + "");
+			logger.info("Access Token = " + log.getAccessToken() + "");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
