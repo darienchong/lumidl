@@ -17,5 +17,10 @@ public class DownloadUrl {
 
 	public GenericUrl getUrl() {
 		return url;
-	}	
+	}
+	
+	@Override
+	public String toString() {
+		return "[" + getFilePath() + "|" + getUrl() + "]";
+	}
 }

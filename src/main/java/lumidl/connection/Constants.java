@@ -56,6 +56,6 @@ public final class Constants {
 		}
 	}
 	
-	public Constants() {
+	private Constants() {
 	}
 }

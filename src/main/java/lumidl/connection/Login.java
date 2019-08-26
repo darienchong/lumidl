@@ -28,8 +28,6 @@ import static lumidl.connection.Constants.*;
  */
 public class Login {	
 	private Logger logger;
-	private HttpTransport httpTransport;
-	private HttpRequestFactory httpRequestFactory;
 	private String accessToken = null;
 	private String username;
 	private String password;
@@ -40,9 +38,6 @@ public class Login {
 	 * @param password The password to be used during actual login attempt.
 	 */
 	public Login(String username, String password) {
-		// We use Apache's HTTP transport because it preserves cookies across requests.
-		httpTransport = new ApacheHttpTransport();
-		httpRequestFactory = httpTransport.createRequestFactory();
 		logger = Logger.getLogger(this.getClass().getName());
 		this.username = username;
 		this.password = password;
@@ -85,10 +80,10 @@ public class Login {
 		 * 4. Save access token for use in API calls.
 		 */
 		// The documentation doesn't mention under what conditions the build*Request methods throw IOExceptions, so we'll deal with it as it comes.
-		HttpRequest authRequest = httpRequestFactory.buildPostRequest(generateAuthUrl(), generateAuthFormContents(username, password));
-		String code = retrieveTokenCode(authRequest, httpRequestFactory);
+		HttpRequest authRequest = HttpManager.getHttpRequestFactory().buildPostRequest(generateAuthUrl(), generateAuthFormContents(username, password));
+		String code = retrieveTokenCode(authRequest);
 		
-		HttpRequest tokenRequest = withApim(httpRequestFactory.buildPostRequest(generateTokenUrl(), generateTokenFormContents(code)));
+		HttpRequest tokenRequest = withApim(HttpManager.getHttpRequestFactory().buildPostRequest(generateTokenUrl(), generateTokenFormContents(code)));
 		HttpResponse tokenResponse = tokenRequest.execute();
 		
 		Map<String, Object> tokenResponseJson;
@@ -111,7 +106,7 @@ public class Login {
 	 * @return a new API object.
 	 */
 	public Api generateApiObject() {
-		return new Api(getAccessToken(), getSubscriptionKey(), httpRequestFactory);
+		return new Api(getAccessToken(), getSubscriptionKey());
 	}
 	
 	// ======================================  Helper functions ====================================== \\
@@ -131,13 +126,13 @@ public class Login {
 	 * @return A GenericUrl form representation of the authentication endpoint URL.
 	 */
 	private static GenericUrl generateAuthUrl() {
-		GenericUrl toReturn = new GenericUrl(ADFS_OAUTH2_URL);
-		toReturn.set("response_type", ADFS_RESPONSE_TYPE);
-		toReturn.set("client_id", ADFS_CLIENT_ID);
+		GenericUrl toReturn = new GenericUrl(Constants.ADFS_OAUTH2_URL);
+		toReturn.set("response_type", Constants.ADFS_RESPONSE_TYPE);
+		toReturn.set("client_id", Constants.ADFS_CLIENT_ID);
 		toReturn.set("state", generateRandomBytes(16));
-		toReturn.set("redirect_uri", ADFS_REDIRECT_URL);
-		toReturn.set("scope", ADFS_SCOPE);
-		toReturn.set("resource",ADFS_RESOURCE);
+		toReturn.set("redirect_uri", Constants.ADFS_REDIRECT_URL);
+		toReturn.set("scope", Constants.ADFS_SCOPE);
+		toReturn.set("resource",Constants.ADFS_RESOURCE);
 		toReturn.set("nonce", generateRandomBytes(16));
 		
 		return toReturn;
@@ -148,7 +143,7 @@ public class Login {
 	 * @return A GenericUrl form representation of the token endpoint URL.
 	 */
 	private static GenericUrl generateTokenUrl() {
-		return new GenericUrl(API_BASE_URL + ADFS_TOKEN_PATH);
+		return new GenericUrl(Constants.API_BASE_URL + Constants.ADFS_TOKEN_PATH);
 	}
 	/**
 	 * Generates the authentication form contents.
@@ -174,11 +169,11 @@ public class Login {
 	 */
 	private static HttpContent generateTokenFormContents(String code) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("grant_type", ADFS_GRANT_TYPE);
-		map.put("client_id", ADFS_CLIENT_ID);
-		map.put("resource", ADFS_RESOURCE);
+		map.put("grant_type", Constants.ADFS_GRANT_TYPE);
+		map.put("client_id", Constants.ADFS_CLIENT_ID);
+		map.put("resource", Constants.ADFS_RESOURCE);
 		map.put("code", code);
-		map.put("redirect_uri", ADFS_REDIRECT_URL);
+		map.put("redirect_uri", Constants.ADFS_REDIRECT_URL);
 		
 		return new UrlEncodedContent(map);
 	}
@@ -192,7 +187,7 @@ public class Login {
 	 * @throws AuthenticationException
 	 */
 	@SuppressWarnings("unchecked")
-	private static String retrieveTokenCode(HttpRequest request, HttpRequestFactory factory) throws IOException, AuthenticationException {
+	private static String retrieveTokenCode(HttpRequest request) throws IOException, AuthenticationException {
 		request.setFollowRedirects(false);
 		request.setThrowExceptionOnExecuteError(false);
 		
@@ -209,7 +204,7 @@ public class Login {
 					throw new AuthenticationException("No code parameter found in callback url.");
 				}
 			} else {
-				return retrieveTokenCode(factory.buildGetRequest(redirectionUrl), factory);
+				return retrieveTokenCode(HttpManager.getHttpRequestFactory().buildGetRequest(redirectionUrl));
 			}
 		}
 		
@@ -222,7 +217,7 @@ public class Login {
 	 * @return The same request, with altered headers (subscription key put in).
 	 */
 	private static HttpRequest withApim(HttpRequest request) {
-		request.getHeaders().set(OCP_APIM_SUBSCRIPTION_KEY_HEADER_NAME, OCP_APIM_SUBSCRIPTION_KEY);
+		request.getHeaders().set(Constants.OCP_APIM_SUBSCRIPTION_KEY_HEADER_NAME, Constants.OCP_APIM_SUBSCRIPTION_KEY);
 		return request;
 	}
 }
