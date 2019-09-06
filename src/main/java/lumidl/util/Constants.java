@@ -1,13 +1,5 @@
 package lumidl.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public final class Constants {
 	// LumiNUS API URLs, paths, etc.
 	public static final String API_BASE_URL = "https://luminus.azure-api.net";
@@ -33,41 +25,12 @@ public final class Constants {
 	public static final String OCP_APIM_SUBSCRIPTION_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key";
 	public static final String OCP_APIM_SUBSCRIPTION_KEY = "6963c200ca9440de8fa1eede730d8f7e";
 	
-	public static final String PROPERTIES_PATH = "./bin/main/config.properties";
+	public static final String PROPERTIES_PATH = "./config.properties";
 	
-	// These need reading into from a .properties file, so we can't leave them as static vars.
-	// To access them, we should instantiate a Constants object and call getters.
-	private String username;
-	private String password;
-	private String downloadPath;
+	public static final String USERNAME = System.getProperty("username");
+	public static final String PASSWORD = System.getProperty("password");
+	public static final String DOWNLOAD_PATH = System.getProperty("path");
 	
-	private Logger logger;
-	
-	public Constants() {
-		logger = LoggerFactory.getLogger(this.getClass());
-		Properties properties = new Properties();
-		try (FileInputStream fis = new FileInputStream(PROPERTIES_PATH)){
-			properties.load(fis);
-			
-			username = properties.getProperty("username");
-			password = properties.getProperty("password");
-			downloadPath = properties.getProperty("path");
-		} catch (FileNotFoundException e) {
-			System.err.println("The .properties file was not found. Unable to retrieve user information.");
-		} catch (IOException e) {
-			System.err.println("An exception was encountered while trying to open the .properties file.");
-		}
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getDownloadPath() {
-		return downloadPath;
+	private Constants() {
 	}
 }

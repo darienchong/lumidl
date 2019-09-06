@@ -76,6 +76,6 @@ public class Api {
 	// ======================================  Helper functions ====================================== \\
 	
 	private Folder buildModuleFolder(String moduleName, String moduleId) {
-		return new Folder(new Constants().getDownloadPath() + "\\" + moduleName, moduleId, this);
+		return new Folder(Constants.DOWNLOAD_PATH + "\\" + moduleName, moduleId, this);
 	}
 }

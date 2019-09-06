@@ -1,6 +1,7 @@
 package lumidl;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -17,10 +18,9 @@ public class Main {
 	public static void main(String[] args) {
 		Logger logger = LoggerFactory.getLogger(Main.class);
 		
-		try {
+		try {			
 			// TODO: Add user input for password, saving over username/password.
-			Constants constants = new Constants();
-			Login log = new Login(constants.getUsername(), constants.getPassword());
+			Login log = new Login(Constants.USERNAME, Constants.PASSWORD);
 			log.execute();
 			Api api = log.generateApiObject();
 			
