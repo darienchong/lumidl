@@ -13,5 +13,5 @@ The parameters should correspond to these:
 ```
 username = nusstu\your_NUSNET_id
 password = your_NUSNET_password
-path = path\to\root\downloads\folder
+path_to_download_files_to = path\to\root\downloads\folder
 ```
