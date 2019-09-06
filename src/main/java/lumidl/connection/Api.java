@@ -9,6 +9,8 @@ import com.google.api.client.http.HttpRequest;
 import com.google.gson.Gson;
 
 import lumidl.model.ModuleResponse;
+import lumidl.util.Constants;
+import lumidl.util.LoggerFactory;
 import lumidl.model.Module;
 
 /**
@@ -33,7 +35,7 @@ public class Api {
 		}
 		this.accessToken = accessToken;
 		this.subscriptionKey = subscriptionKey;
-		logger = Logger.getLogger(this.getClass().getCanonicalName());
+		logger = LoggerFactory.getLogger(this.getClass());
 	}
 	
 	/**
@@ -55,7 +57,7 @@ public class Api {
 	 * @throws IOException
 	 */
 	public List<DownloadUrl> getDownloads(Module m) throws IOException {
-		Folder rootFolderNavigator = buildFolder(m.id);
+		Folder rootFolderNavigator = buildModuleFolder(m.name, m.id);
 		return rootFolderNavigator.getAllDownloadUrls();
 	}
 		
@@ -73,7 +75,7 @@ public class Api {
 	
 	// ======================================  Helper functions ====================================== \\
 	
-	private Folder buildFolder(String currentFolderId) {
-		return new Folder(Constants.DOWNLOAD_PATH, currentFolderId, this);
+	private Folder buildModuleFolder(String moduleName, String moduleId) {
+		return new Folder(new Constants().getDownloadPath() + "\\" + moduleName, moduleId, this);
 	}
 }

@@ -11,16 +11,12 @@ import java.util.logging.Logger;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.UrlEncodedContent;
-import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-// Yes, star imports are a bad pattern, TODO, etc.
-import static lumidl.connection.Constants.*;
+import lumidl.util.Constants;
 
 /**
  * Contains and encapsulates all login-related methods and data.
@@ -60,7 +56,7 @@ public class Login {
 	 * @return A String representation of the subscription key.
 	 */
 	public String getSubscriptionKey() {
-		return OCP_APIM_SUBSCRIPTION_KEY;
+		return Constants.OCP_APIM_SUBSCRIPTION_KEY;
 	}
 	
 	/**

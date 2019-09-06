@@ -13,6 +13,8 @@ import com.google.gson.Gson;
 import lumidl.model.File;
 import lumidl.model.FilesResponse;
 import lumidl.model.FolderResponse;
+import lumidl.util.Constants;
+import lumidl.util.LoggerFactory;
 
 /**
  * 
@@ -32,9 +34,10 @@ public class Folder {
 	 * @param api
 	 */
 	public Folder(String currentPath, String currentFolderId, Api api) {
-		this.currentPath = currentPath;
+		this.currentPath = sanitise(currentPath);
 		this.currentFolderId = currentFolderId;
-		this.logger = Logger.getLogger(this.getClass().getCanonicalName());
+		this.logger = LoggerFactory.getLogger(this.getClass());
+		this.api = api;
  	}
 	
 	/**
@@ -88,5 +91,8 @@ public class Folder {
 		return masterList;
 	}
 	
-	// ======================================  Helper functions ====================================== \\	
+	// ======================================  Helper functions ====================================== \\
+	private static String sanitise(String s) {
+		return s.replaceAll(" ", "_");
+	}
 }

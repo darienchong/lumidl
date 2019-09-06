@@ -1,9 +1,12 @@
-package lumidl.connection;
+package lumidl.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Constants {
 	// LumiNUS API URLs, paths, etc.
@@ -32,30 +35,39 @@ public final class Constants {
 	
 	public static final String PROPERTIES_PATH = "./bin/main/config.properties";
 	
-	// We can't set these as final because we need to read values into them from our .properties file, but
-	// we don't want people changing them either...
-	// TODO?
-	public static String USERNAME = null;
-	public static String PASSWORD = null;
-	public static String DOWNLOAD_PATH = null;
+	// These need reading into from a .properties file, so we can't leave them as static vars.
+	// To access them, we should instantiate a Constants object and call getters.
+	private String username;
+	private String password;
+	private String downloadPath;
 	
-	static {
+	private Logger logger;
+	
+	public Constants() {
+		logger = LoggerFactory.getLogger(this.getClass());
 		Properties properties = new Properties();
 		try (FileInputStream fis = new FileInputStream(PROPERTIES_PATH)){
 			properties.load(fis);
 			
-			USERNAME = properties.getProperty("username");
-			PASSWORD = properties.getProperty("password");
-			DOWNLOAD_PATH = properties.getProperty("path");
+			username = properties.getProperty("username");
+			password = properties.getProperty("password");
+			downloadPath = properties.getProperty("path");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("The .properties file was not found. Unable to retrieve user information.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("An exception was encountered while trying to open the .properties file.");
 		}
 	}
-	
-	private Constants() {
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getDownloadPath() {
+		return downloadPath;
 	}
 }
