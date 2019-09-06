@@ -2,7 +2,7 @@ package lumidl.util;
 
 public final class Constants {
 	// LumiNUS API URLs, paths, etc.
-	public static final String API_BASE_URL = "https://luminus.azure-api.net";
+	public static final String API_BASE_URL = "https://luminus.nus.edu.sg/v2/api";
 	public static final String GET_RESOURCES_PATH = "/module";
 	public static final String ALL_FILES_PATH = "/files/%s/allfiles";
 	public static final String GET_FILES_PATH = "/files/%s/file";
